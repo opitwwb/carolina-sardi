@@ -389,7 +389,7 @@ const PORTFOLIO_ITEMS = [
 ];
 const GALLERY_STUDIO = [
   { title:"Studio Visit — Miami",     year:"2023", medium:"Steel & Paint",       shape:"morph",    color1:"#1a1210", color2:"#c4622d" },
-  { title:"Casting Process",          year:"2022", medium:"Behind the Scenes",   shape:"circle",   color1:"#10181a", color2:"#2d6b8b" },
+  { title:"Casting Process",          year:"2022", medium:"Behind the Scenes",   shape:"circle",   color1:"#10181a", color2:"#2d6b8b", img:"https://vpqevrxwiglfpyrwxmne.supabase.co/storage/v1/object/public/images/lilia%201.png" },
   { title:"Surface & Texture",        year:"2023", medium:"Detail Study",        shape:"wave",     color1:"#1a1a10", color2:"#c9a84c" },
   { title:"Form in Progress",         year:"2021", medium:"Work in Progress",    shape:"triangle", color1:"#1a1018", color2:"#8b2020" },
   { title:"Light & Shadow",           year:"2022", medium:"Studio Photography",  shape:"spiral",   color1:"#101a18", color2:"#3d8b6b" },
@@ -408,10 +408,7 @@ const GALLERY_EXHIBITIONS = [
 
 /* ═══════════════════════════════════════════════════════════════════════════
    ① SCROLL PATH RAIL
-   Fixed left‑side organic spine. Draws itself 0→100% as you scroll the page.
-   A glowing orb rides the leading edge of the drawn stroke.
 ═══════════════════════════════════════════════════════════════════════════ */
-// The SVG viewBox is "0 0 44 1000". The path weaves left/right within it.
 const RAIL_PATH = "M22,0 C36,55 8,115 28,185 C44,240 6,310 26,380 C44,440 7,510 24,575 C40,635 5,700 22,760 C38,818 6,880 20,940 C30,970 18,990 22,1000";
 
 function ScrollPathRail() {
@@ -425,11 +422,10 @@ function ScrollPathRail() {
     const rail = railRef.current;
     if (!path || !rail) return;
 
-    // Wait one tick so SVG is painted and getTotalLength() is accurate
     const init = () => {
       const len = path.getTotalLength();
       path.style.strokeDasharray  = len;
-      path.style.strokeDashoffset = len;   // fully hidden initially
+      path.style.strokeDashoffset = len;
 
       const onScroll = () => {
         const scrolled  = window.scrollY;
@@ -437,13 +433,10 @@ function ScrollPathRail() {
         const progress  = Math.min(1, scrolled / maxScroll);
         const drawn     = len * progress;
 
-        // Draw the path
         path.style.strokeDashoffset = len - drawn;
 
-        // Show rail only after first scroll
         if (scrolled > 80) rail.classList.add("visible");
 
-        // Move glowing orb to the tip of the drawn stroke
         if (drawn > 1) {
           try {
             const pt = path.getPointAtLength(Math.min(drawn, len - 0.5));
@@ -457,7 +450,6 @@ function ScrollPathRail() {
       return () => window.removeEventListener("scroll", onScroll);
     };
 
-    // Small delay to let SVG render
     const t = setTimeout(init, 100);
     return () => clearTimeout(t);
   }, []);
@@ -465,10 +457,7 @@ function ScrollPathRail() {
   return (
     <div id="scroll-rail" ref={railRef}>
       <svg viewBox="0 0 44 1000" preserveAspectRatio="none" fill="none">
-        {/* Faint ghost path — always visible */}
         <path d={RAIL_PATH} stroke="rgba(196,98,45,0.08)" strokeWidth="1" strokeLinecap="round"/>
-
-        {/* The drawing path */}
         <path
           ref={pathRef}
           d={RAIL_PATH}
@@ -477,14 +466,10 @@ function ScrollPathRail() {
           strokeWidth="1"
           strokeLinecap="round"
         />
-
-        {/* Pulsing ring at the orb */}
         <circle ref={ringRef} cx="22" cy="0" r="7" className="rail-dot-ring">
           <animate attributeName="r"       values="6;11;6"   dur="2s" repeatCount="indefinite"/>
           <animate attributeName="opacity" values=".5;0;.5"  dur="2s" repeatCount="indefinite"/>
         </circle>
-
-        {/* Solid dot — leading edge */}
         <circle ref={dotRef} cx="22" cy="0" r="3.5" className="rail-dot">
           <animate attributeName="r" values="3;4.5;3" dur="1.6s" repeatCount="indefinite"/>
         </circle>
@@ -495,9 +480,6 @@ function ScrollPathRail() {
 
 /* ═══════════════════════════════════════════════════════════════════════════
    ② DRAW PATH
-   Generic component. Measures its path with getTotalLength(), then draws
-   it in via strokeDashoffset when it scrolls into view.
-   Props: d, viewBox, width, height, stroke, strokeWidth, style, duration, delay
 ═══════════════════════════════════════════════════════════════════════════ */
 function DrawPath({ d, viewBox = "0 0 800 200", width = "100%", height = "auto",
                     stroke = "rgba(196,98,45,0.35)", strokeWidth = 1.2,
@@ -541,8 +523,6 @@ function DrawPath({ d, viewBox = "0 0 800 200", width = "100%", height = "auto",
 
 /* ═══════════════════════════════════════════════════════════════════════════
    ③ ANIMATED DIVIDER
-   Replaces the plain <hr>. A wavy SVG line that draws left→right on scroll.
-   accent: "rust" | "gold"
 ═══════════════════════════════════════════════════════════════════════════ */
 const WAVE_D = "M0,8 C90,1 180,15 270,8 C360,1 450,15 540,8 C630,1 720,15 810,8 C900,1 990,15 1080,8 C1170,1 1260,15 1350,8 C1440,1 1530,15 1620,8";
 
@@ -582,9 +562,21 @@ function AnimatedDivider({ accent = "rust" }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   ART SVG  (inline artwork for portfolio / galleries)
+   ART SVG  — suporta img real ou SVG gerado
 ═══════════════════════════════════════════════════════════════════════════ */
-function ArtSVG({ shape, color1, color2 }) {
+function ArtSVG({ shape, color1, color2, img }) {
+  /* ── Se houver URL de imagem, renderiza foto real ── */
+  if (img) {
+    return (
+      <img
+        src={img}
+        alt={shape}
+        style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }}
+      />
+    );
+  }
+
+  /* ── Caso contrário, mantém os SVGs originais ── */
   const id = `g${shape}${color2.replace(/[^a-z0-9]/gi,"")}`;
   const s  = { background:color1, width:"100%", height:"100%" };
   switch (shape) {
@@ -707,7 +699,7 @@ function Counter({target,suffix=""}) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   HORIZONTAL GALLERY (mouse-wheel scroll → horizontal track)
+   HORIZONTAL GALLERY
 ═══════════════════════════════════════════════════════════════════════════ */
 function HorizontalGallery({ label, heading, sub, items, bg, accent }) {
   const outerRef   = useRef(null);
@@ -726,9 +718,7 @@ function HorizontalGallery({ label, heading, sub, items, bg, accent }) {
     if (!outer || !track) return;
     const getMax = () => Math.max(0, track.scrollWidth - track.parentElement.clientWidth);
 
-    /* ── lerp animation loop ── */
     const loop = () => {
-      // apply momentum decay on mobile after finger lifts
       if (Math.abs(touchVel.current) > 0.5) {
         xTarget.current = Math.max(0, Math.min(getMax(), xTarget.current + touchVel.current));
         touchVel.current *= 0.92;
@@ -742,7 +732,6 @@ function HorizontalGallery({ label, heading, sub, items, bg, accent }) {
     };
     raf.current = requestAnimationFrame(loop);
 
-    /* ── MOUSE WHEEL (desktop) ── */
     const onWheel = (e) => {
       const rect = outer.getBoundingClientRect();
       if (rect.top > 80 || rect.bottom < window.innerHeight - 80) return;
@@ -753,7 +742,6 @@ function HorizontalGallery({ label, heading, sub, items, bg, accent }) {
     };
     window.addEventListener("wheel", onWheel, { passive: false });
 
-    /* ── TOUCH (mobile) ── */
     const onTouchStart = (e) => {
       touchStart.current = e.touches[0].clientX;
       touchLast.current  = e.touches[0].clientX;
@@ -762,19 +750,16 @@ function HorizontalGallery({ label, heading, sub, items, bg, accent }) {
 
     const onTouchMove = (e) => {
       const x    = e.touches[0].clientX;
-      const dx   = touchLast.current - x;          // positive = drag left = scroll right
+      const dx   = touchLast.current - x;
       touchVel.current  = dx;
       touchLast.current = x;
       const max  = getMax();
       xTarget.current = Math.max(0, Math.min(max, xTarget.current + dx * 1.2));
-      // prevent vertical page scroll only when clearly swiping horizontally
       const totalDx = Math.abs(touchStart.current - x);
       if (totalDx > 8) e.preventDefault();
     };
 
-    const onTouchEnd = () => {
-      // momentum continues via touchVel decay in the loop
-    };
+    const onTouchEnd = () => {};
 
     outer.addEventListener("touchstart", onTouchStart, { passive: true });
     outer.addEventListener("touchmove",  onTouchMove,  { passive: false });
@@ -811,7 +796,9 @@ function HorizontalGallery({ label, heading, sub, items, bg, accent }) {
         <div ref={trackRef} className="hg-track">
           {items.map((item,i)=>(
             <div key={i} className="hg-card">
-              <div className="hg-card-visual"><ArtSVG shape={item.shape} color1={item.color1} color2={item.color2}/></div>
+              <div className="hg-card-visual">
+                <ArtSVG shape={item.shape} color1={item.color1} color2={item.color2} img={item.img}/>
+              </div>
               <div className="hg-card-info">
                 <div className="hg-card-num">{String(i+1).padStart(2,"0")}</div>
                 <div className="hg-card-title">{item.title}</div>
@@ -836,7 +823,6 @@ export default function CarolinaSardi() {
   const [ring,    setRing]     = useState({x:0,y:0});
   const ringPos = useRef({x:0,y:0});
 
-  /* cursor */
   useEffect(()=>{
     const mv=e=>setCursor({x:e.clientX,y:e.clientY});
     window.addEventListener("mousemove",mv);
@@ -847,21 +833,18 @@ export default function CarolinaSardi() {
     return()=>{window.removeEventListener("mousemove",mv);cancelAnimationFrame(r);};
   },[cursor.x,cursor.y]);
 
-  /* nav scroll */
   useEffect(()=>{
     const fn=()=>setScrolled(window.scrollY>60);
     window.addEventListener("scroll",fn);
     return()=>window.removeEventListener("scroll",fn);
   },[]);
 
-  /* reveal observer */
   useEffect(()=>{
     const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");});},{threshold:.12});
     document.querySelectorAll(".reveal,.reveal-left,.reveal-right,.stagger").forEach(el=>obs.observe(el));
     return()=>obs.disconnect();
   },[]);
 
-  /* escape modal */
   useEffect(()=>{
     const fn=e=>{if(e.key==="Escape")setModal(null);};
     window.addEventListener("keydown",fn);
@@ -870,9 +853,6 @@ export default function CarolinaSardi() {
 
   const marquee = ["Living Forms","Free Spirit","Tension & Balance","Matter & Time","Biomorphism","Contemporary Sculpture"];
 
-  /* ── SVG PATH DATA ───────────────────────────────────────────────────── */
-
-  // Biomorphic sculpture silhouette behind About right column
   const ABOUT_SILHOUETTE =
     "M260,55 C315,22 400,35 445,88 C490,141 498,228 472,302 " +
     "C446,376 394,428 325,448 C256,468 178,455 128,408 " +
@@ -883,17 +863,14 @@ export default function CarolinaSardi() {
     "C321,300 278,305 248,285 C218,265 202,228 210,195 " +
     "C218,162 232,132 262,115 Z";
 
-  // Geometric / architectural line path for Timeline section
   const TIMELINE_PATH =
     "M0,30 L80,30 L80,0 L180,0 L180,50 L280,50 L280,10 " +
     "L380,10 L380,40 L480,40 L480,5 L580,5 L580,35 L680,35 L680,0 L780,0";
 
-  // Flowing "signature" underline for Contact section
   const SIGNATURE_PATH =
     "M40,40 C80,18 140,55 200,30 C255,8 310,48 368,28 " +
     "C418,10 464,42 520,25 C568,10 610,38 650,30";
 
-  // Hero brushstroke that draws on mount
   const HERO_BRUSHSTROKE =
     "M60,12 C180,2 360,22 540,8 C720,-4 900,18 1080,6 " +
     "C1200,-2 1320,14 1440,8";
@@ -902,14 +879,11 @@ export default function CarolinaSardi() {
     <>
       <style>{STYLE}</style>
 
-      {/* ── CURSOR ── */}
       <div id="cursor" style={{left:cursor.x,top:cursor.y}}/>
       <div id="cursor-ring" style={{left:ring.x,top:ring.y}}/>
 
-      {/* ① SCROLL PATH RAIL ── fixed, draws with page scroll */}
       <ScrollPathRail/>
 
-      {/* ── NAV ── */}
       <nav className={scrolled?"scrolled":""}>
         <a href="#hero" className="nav-logo">Carolina Sardi</a>
         <ul className="nav-links">
@@ -919,16 +893,12 @@ export default function CarolinaSardi() {
         </ul>
       </nav>
 
-      {/* ── HERO ── */}
       <section id="hero">
         <ParticleCanvas/>
-        {/* grid lines */}
         <svg style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:.06,pointerEvents:"none"}}>
           {Array.from({length:12},(_,i)=><line key={i} x1={`${i*9}%`} y1="0" x2={`${i*9}%`} y2="100%" stroke="#c4622d" strokeWidth=".5"/>)}
           {Array.from({length:8}, (_,i)=><line key={i} x1="0" y1={`${i*14}%`} x2="100%" y2={`${i*14}%`} stroke="#c4622d" strokeWidth=".5"/>)}
         </svg>
-
-        {/* Hero brushstroke — draws on page load */}
         <DrawPath
           d={HERO_BRUSHSTROKE}
           viewBox="0 0 1440 20"
@@ -938,7 +908,6 @@ export default function CarolinaSardi() {
           duration={2.4} delay={1.5}
           style={{ position:"absolute", bottom:"22%", left:0, right:0, width:"100%" }}
         />
-
         <div className="sculpture-container"><SculptureSVG/></div>
         <div className="hero-content">
           <p className="hero-eyebrow">Contemporary Sculptor · Buenos Aires</p>
@@ -952,13 +921,9 @@ export default function CarolinaSardi() {
         <div className="scroll-indicator"><span>Scroll</span><div className="scroll-line"/></div>
       </section>
 
-      {/* ③ ANIMATED DIVIDER */}
       <AnimatedDivider/>
 
-      {/* ── ABOUT ── */}
       <section id="about" style={{background:"var(--charcoal)",display:"grid",gridTemplateColumns:"1fr 1fr",gap:"100px",alignItems:"start",position:"relative",overflow:"hidden"}}>
-
-        {/* ② DRAW PATH — biomorphic sculpture outline (right bg) */}
         <DrawPath
           d={ABOUT_SILHOUETTE}
           viewBox="0 0 520 510"
@@ -977,7 +942,6 @@ export default function CarolinaSardi() {
           duration={2.8} delay={0.9}
           style={{ position:"absolute", right:"-20px", top:"80px", zIndex:0 }}
         />
-
         <div style={{position:"relative",zIndex:1}}>
           <p className="section-label reveal">About the Artist</p>
           <h2 className="section-h2 reveal">Form,<br/><em>Matter</em><br/>& Memory</h2>
@@ -992,7 +956,6 @@ export default function CarolinaSardi() {
             ))}
           </div>
         </div>
-
         <div style={{paddingTop:80,position:"relative",zIndex:1}}>
           <div className="statement-block reveal-right">
             <p className="statement-text">"My sculpture is born from a desire to capture what exists between states — between solid and fluid, between the natural and the constructed."</p>
@@ -1009,7 +972,6 @@ export default function CarolinaSardi() {
 
       <AnimatedDivider/>
 
-      {/* ── HORIZONTAL GALLERY 1 ── */}
       <HorizontalGallery
         label="Studio & Process"
         heading="Behind the <em>Work</em>"
@@ -1021,7 +983,6 @@ export default function CarolinaSardi() {
 
       <AnimatedDivider/>
 
-      {/* ── PORTFOLIO ── */}
       <section id="portfolio">
         <div className="portfolio-header reveal">
           <div>
@@ -1040,7 +1001,7 @@ export default function CarolinaSardi() {
         <div className="portfolio-masonry">
           {PORTFOLIO_ITEMS.map((item,i)=>(
             <div key={i} className="portfolio-item reveal" style={{transitionDelay:`${i*.1}s`}} onClick={()=>setModal(item)}>
-              <div className="art-placeholder"><ArtSVG shape={item.shape} color1={item.color1} color2={item.color2}/></div>
+              <div className="art-placeholder"><ArtSVG shape={item.shape} color1={item.color1} color2={item.color2} img={item.img}/></div>
               <div className="portfolio-overlay">
                 <div>
                   <div className="overlay-title">{item.title}</div>
@@ -1057,7 +1018,6 @@ export default function CarolinaSardi() {
 
       <AnimatedDivider accent="gold"/>
 
-      {/* ── HORIZONTAL GALLERY 2 ── */}
       <HorizontalGallery
         label="Exhibitions & Public Art"
         heading="On View <em>Worldwide</em>"
@@ -1069,10 +1029,7 @@ export default function CarolinaSardi() {
 
       <AnimatedDivider/>
 
-      {/* ── TIMELINE — with geometric draw path ── */}
       <section id="timeline" style={{background:"var(--dark)",position:"relative",overflow:"hidden"}}>
-
-        {/* ② DRAW PATH — architectural / structural lines */}
         <DrawPath
           d={TIMELINE_PATH}
           viewBox="0 0 780 60"
@@ -1082,7 +1039,6 @@ export default function CarolinaSardi() {
           duration={2.8} delay={0.4}
           style={{ position:"absolute", bottom:"60px", left:"60px", zIndex:0 }}
         />
-
         <div className="timeline-header" style={{position:"relative",zIndex:1}}>
           <p className="section-label reveal">Career</p>
           <h2 className="section-h2 reveal">Exhibitions &<br/><em>Highlights</em></h2>
@@ -1101,7 +1057,6 @@ export default function CarolinaSardi() {
 
       <AnimatedDivider/>
 
-      {/* ── COLLECTIONS ── */}
       <section id="collections" style={{background:"var(--charcoal)"}}>
         <p className="section-label reveal">Collections</p>
         <h2 className="section-h2 reveal">Works in<br/><em>Museums</em> & Collections</h2>
@@ -1123,10 +1078,7 @@ export default function CarolinaSardi() {
 
       <AnimatedDivider accent="gold"/>
 
-      {/* ── CONTACT — with flowing signature path ── */}
       <section id="contact" style={{position:"relative",overflow:"hidden"}}>
-
-        {/* ② DRAW PATH — large decorative background orbit */}
         <DrawPath
           d="M400,260 C500,180 620,160 700,220 C780,280 800,400 730,470 C660,540 530,550 440,490 C350,430 320,320 400,260 Z"
           viewBox="0 0 900 600"
@@ -1136,11 +1088,8 @@ export default function CarolinaSardi() {
           duration={4} delay={0.2}
           style={{ position:"absolute", left:"50%", top:"50%", transform:"translate(-50%,-50%)", zIndex:0 }}
         />
-
         <p className="section-label reveal" style={{justifyContent:"center",position:"relative",zIndex:1}}>Contact</p>
         <h2 className="contact-h2 reveal" style={{position:"relative",zIndex:1}}>Let's<br/><em>Connect</em></h2>
-
-        {/* ② DRAW PATH — flowing signature underline */}
         <DrawPath
           d={SIGNATURE_PATH}
           viewBox="0 0 690 70"
@@ -1150,12 +1099,10 @@ export default function CarolinaSardi() {
           duration={2.2} delay={0.5}
           style={{ display:"block", margin:"0 auto 48px", position:"relative", zIndex:1 }}
         />
-
         <p className="contact-sub reveal" style={{position:"relative",zIndex:1}}>Inquiries for acquisitions, exhibitions & public art commissions</p>
         <a href="mailto:studio@carolinasardi.com" className="contact-email reveal" style={{position:"relative",zIndex:1}}>studio@carolinasardi.com</a>
       </section>
 
-      {/* ── FOOTER ── */}
       <footer>
         <div className="footer-logo">Carolina Sardi</div>
         <div className="footer-copy">© 2025 Carolina Sardi. All rights reserved.</div>
@@ -1171,11 +1118,10 @@ export default function CarolinaSardi() {
         </div>
       </footer>
 
-      {/* ── MODAL ── */}
       <div className={`modal-bg${modal?" open":""}`} onClick={()=>setModal(null)}>
         {modal&&(
           <div className="modal-inner" onClick={e=>e.stopPropagation()}>
-            <div className="modal-art"><ArtSVG shape={modal.shape} color1={modal.color1} color2={modal.color2}/></div>
+            <div className="modal-art"><ArtSVG shape={modal.shape} color1={modal.color1} color2={modal.color2} img={modal.img}/></div>
             <div className="modal-meta">
               <div>
                 <div className="modal-title">{modal.title}</div>
