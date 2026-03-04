@@ -126,22 +126,27 @@ const STYLE = `
   .statement-text { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; font-style:italic; line-height:1.6; color:var(--cream); }
 
   /* ── HORIZONTAL GALLERY ── */
-  .hg-outer { position:relative; overflow:hidden; }
+  .hg-outer { position:relative; overflow:hidden; touch-action:pan-y; }
   .hg-header { padding:100px 60px 50px; display:flex; justify-content:space-between; align-items:flex-end; }
   .hg-hint { display:flex; align-items:center; gap:12px; font-size:.68rem; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); }
   .hg-hint-arrow { animation:hintBounce 2s ease-in-out infinite; }
   .hg-sticky { position:sticky; top:0; height:100vh; overflow:hidden; display:flex; align-items:center; }
-  .hg-track { display:flex; gap:20px; padding:0 60px; will-change:transform; }
+  .hg-track { display:flex; gap:20px; padding:0 60px; will-change:transform; user-select:none; }
   .hg-card { flex-shrink:0; width:clamp(300px,36vw,540px); height:66vh; position:relative; overflow:hidden; background:var(--mid); }
-  .hg-card-visual { width:100%; height:100%; transition:transform .8s cubic-bezier(.25,.46,.45,.94); }
+  .hg-card-visual { width:100%; height:100%; transition:transform .8s cubic-bezier(.25,.46,.45,.94); pointer-events:none; }
   .hg-card:hover .hg-card-visual { transform:scale(1.06); }
   .hg-card-info { position:absolute; bottom:0; left:0; right:0; padding:32px 28px; background:linear-gradient(to top,rgba(10,9,8,.92) 0%,transparent 100%); transform:translateY(8px); transition:transform .4s ease; }
   .hg-card:hover .hg-card-info { transform:none; }
   .hg-card-num { font-family:'Cormorant Garamond',serif; font-size:.8rem; color:var(--rust); letter-spacing:.3em; margin-bottom:8px; }
   .hg-card-title { font-family:'Cormorant Garamond',serif; font-size:1.55rem; font-weight:300; color:var(--cream); line-height:1.2; margin-bottom:5px; }
   .hg-card-sub { font-size:.7rem; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; }
-  .hg-bar-track { position:absolute; bottom:0; left:0; right:0; height:2px; background:rgba(255,255,255,.07); }
-  .hg-bar { height:100%; width:0%; }
+  .hg-bar-track { position:absolute; bottom:0; left:0; right:0; height:3px; background:rgba(255,255,255,.07); }
+  .hg-hint-mobile { display:none; }
+  .hg-hint-desktop { display:inline; }
+  @media(max-width:900px){
+    .hg-hint-mobile  { display:inline; }
+    .hg-hint-desktop { display:none; }
+  }
 
   /* ── PORTFOLIO ── */
   #portfolio { background:var(--black); }
@@ -705,12 +710,15 @@ function Counter({target,suffix=""}) {
    HORIZONTAL GALLERY (mouse-wheel scroll → horizontal track)
 ═══════════════════════════════════════════════════════════════════════════ */
 function HorizontalGallery({ label, heading, sub, items, bg, accent }) {
-  const outerRef = useRef(null);
-  const trackRef = useRef(null);
-  const barRef   = useRef(null);
-  const xCur     = useRef(0);
-  const xTarget  = useRef(0);
-  const raf      = useRef(null);
+  const outerRef   = useRef(null);
+  const trackRef   = useRef(null);
+  const barRef     = useRef(null);
+  const xCur       = useRef(0);
+  const xTarget    = useRef(0);
+  const raf        = useRef(null);
+  const touchStart = useRef(0);
+  const touchLast  = useRef(0);
+  const touchVel   = useRef(0);
 
   useEffect(() => {
     const outer = outerRef.current;
@@ -718,15 +726,23 @@ function HorizontalGallery({ label, heading, sub, items, bg, accent }) {
     if (!outer || !track) return;
     const getMax = () => Math.max(0, track.scrollWidth - track.parentElement.clientWidth);
 
+    /* ── lerp animation loop ── */
     const loop = () => {
+      // apply momentum decay on mobile after finger lifts
+      if (Math.abs(touchVel.current) > 0.5) {
+        xTarget.current = Math.max(0, Math.min(getMax(), xTarget.current + touchVel.current));
+        touchVel.current *= 0.92;
+      }
       xCur.current += (xTarget.current - xCur.current) * 0.085;
       track.style.transform = `translateX(${-xCur.current}px)`;
       const max = getMax();
-      if (barRef.current && max > 0) barRef.current.style.width = `${Math.min(100,(xCur.current/max)*100)}%`;
+      if (barRef.current && max > 0)
+        barRef.current.style.width = `${Math.min(100, (xCur.current / max) * 100)}%`;
       raf.current = requestAnimationFrame(loop);
     };
     raf.current = requestAnimationFrame(loop);
 
+    /* ── MOUSE WHEEL (desktop) ── */
     const onWheel = (e) => {
       const rect = outer.getBoundingClientRect();
       if (rect.top > 80 || rect.bottom < window.innerHeight - 80) return;
@@ -735,9 +751,42 @@ function HorizontalGallery({ label, heading, sub, items, bg, accent }) {
       e.preventDefault();
       xTarget.current = Math.max(0, Math.min(max, xTarget.current + e.deltaY * 1.5));
     };
+    window.addEventListener("wheel", onWheel, { passive: false });
 
-    window.addEventListener("wheel", onWheel, { passive:false });
-    return () => { window.removeEventListener("wheel", onWheel); cancelAnimationFrame(raf.current); };
+    /* ── TOUCH (mobile) ── */
+    const onTouchStart = (e) => {
+      touchStart.current = e.touches[0].clientX;
+      touchLast.current  = e.touches[0].clientX;
+      touchVel.current   = 0;
+    };
+
+    const onTouchMove = (e) => {
+      const x    = e.touches[0].clientX;
+      const dx   = touchLast.current - x;          // positive = drag left = scroll right
+      touchVel.current  = dx;
+      touchLast.current = x;
+      const max  = getMax();
+      xTarget.current = Math.max(0, Math.min(max, xTarget.current + dx * 1.2));
+      // prevent vertical page scroll only when clearly swiping horizontally
+      const totalDx = Math.abs(touchStart.current - x);
+      if (totalDx > 8) e.preventDefault();
+    };
+
+    const onTouchEnd = () => {
+      // momentum continues via touchVel decay in the loop
+    };
+
+    outer.addEventListener("touchstart", onTouchStart, { passive: true });
+    outer.addEventListener("touchmove",  onTouchMove,  { passive: false });
+    outer.addEventListener("touchend",   onTouchEnd,   { passive: true });
+
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      outer.removeEventListener("touchstart", onTouchStart);
+      outer.removeEventListener("touchmove",  onTouchMove);
+      outer.removeEventListener("touchend",   onTouchEnd);
+      cancelAnimationFrame(raf.current);
+    };
   }, []);
 
   return (
@@ -749,7 +798,8 @@ function HorizontalGallery({ label, heading, sub, items, bg, accent }) {
           {sub && <p className="reveal" style={{fontSize:".88rem",color:"var(--muted)",fontWeight:200,marginTop:6}}>{sub}</p>}
         </div>
         <div className="hg-hint reveal">
-          <span>Scroll to explore</span>
+          <span className="hg-hint-desktop">Scroll to explore</span>
+          <span className="hg-hint-mobile">Swipe to explore</span>
           <div className="hg-hint-arrow">
             <svg width="30" height="12" viewBox="0 0 30 12" fill="none">
               <path d="M0 6h26M21 2l5 4-5 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
