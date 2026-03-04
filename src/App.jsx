@@ -389,7 +389,7 @@ const PORTFOLIO_ITEMS = [
 ];
 const GALLERY_STUDIO = [
   { title:"Studio Visit — Miami",     year:"2023", medium:"Steel & Paint",       shape:"morph",    color1:"#1a1210", color2:"#c4622d" },
-  { title:"Casting Process",          year:"2022", medium:"Behind the Scenes",   shape:"circle",   color1:"#10181a", color2:"#2d6b8b", img:"https://vpqevrxwiglfpyrwxmne.supabase.co/storage/v1/object/public/images/lilia%201.png" },
+  { title:"Casting Process",          year:"2022", medium:"Behind the Scenes",   shape:"circle",   color1:"#10181a", color2:"#2d6b8b", img:"https://vpqevrxwiglfpyrwxmne.supabase.co/storage/v1/object/public/images/LILIA%2001%20IMAGEM.png" },
   { title:"Surface & Texture",        year:"2023", medium:"Detail Study",        shape:"wave",     color1:"#1a1a10", color2:"#c9a84c" },
   { title:"Form in Progress",         year:"2021", medium:"Work in Progress",    shape:"triangle", color1:"#1a1018", color2:"#8b2020" },
   { title:"Light & Shadow",           year:"2022", medium:"Studio Photography",  shape:"spiral",   color1:"#101a18", color2:"#3d8b6b" },
