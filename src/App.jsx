@@ -223,23 +223,135 @@ const STYLE = `
   @keyframes float    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)} }
   @keyframes hintBounce { 0%,100%{transform:translateX(0)} 50%{transform:translateX(10px)} }
 
+  /* ── TABLET (≤900px) ── */
   @media(max-width:900px){
-    nav{padding:20px 28px} nav.scrolled{padding:14px 28px}
-    section{padding:90px 28px}
-    .portfolio-masonry{columns:2}
-    .collections-grid{grid-template-columns:1fr 1fr}
-    .portfolio-header{flex-direction:column;align-items:flex-start;gap:24px}
-    footer{flex-direction:column;gap:28px;text-align:center}
-    .sculpture-container{opacity:.15;right:-120px}
-    .hg-header{padding:60px 28px 36px;flex-direction:column;align-items:flex-start;gap:16px}
-    .hg-track{padding:0 28px}
-    .hg-card{width:clamp(260px,80vw,400px)}
-    #scroll-rail{display:none}
+    body { cursor:auto; }
+    #cursor, #cursor-ring { display:none; }
+    #scroll-rail { display:none; }
+
+    nav { padding:18px 24px; }
+    nav.scrolled { padding:14px 24px; }
+
+    section { padding:80px 24px; }
+
+    /* hero */
+    .hero-content { text-align:left; padding:0 24px; }
+    .sculpture-container { opacity:.08; right:-100px; width:70vw; }
+    .hero-h1 { font-size:clamp(2.8rem,11vw,5rem); }
+
+    /* about — stack vertically */
+    #about {
+      display:flex !important;
+      flex-direction:column !important;
+      gap:48px !important;
+      padding:80px 24px !important;
+    }
+    #about > div:last-child { padding-top:0 !important; }
+    .draw-path-wrap { display:none; }
+    .statement-block { padding:28px; }
+
+    /* portfolio */
+    .portfolio-header { flex-direction:column; align-items:flex-start; gap:20px; }
+    .portfolio-masonry { columns:2; column-gap:3px; }
+
+    /* horizontal gallery */
+    .hg-outer { overflow:hidden; }
+    .hg-header { padding:60px 24px 32px; flex-direction:column; align-items:flex-start; gap:14px; }
+    .hg-sticky { height:70vh; }
+    .hg-track { padding:0 24px; gap:14px; }
+    .hg-card { width:clamp(240px,75vw,380px); height:60vh; }
+
+    /* timeline */
+    .timeline-grid { grid-template-columns:1fr 1fr; }
+
+    /* collections */
+    .collections-grid { grid-template-columns:1fr 1fr; }
+    .collection-card { padding:32px 24px; }
+    .collections-marquee { margin-top:40px; }
+
+    /* contact */
+    #contact { padding:100px 24px; }
+    .signature-wrap svg { width:90%; }
+
+    /* footer */
+    footer { flex-direction:column; gap:24px; text-align:center; padding:40px 24px; }
   }
+
+  /* ── MOBILE (≤600px) ── */
   @media(max-width:600px){
-    .portfolio-masonry{columns:1}
-    .collections-grid{grid-template-columns:1fr}
-    .nav-links{display:none}
+    body { cursor:auto; }
+
+    /* nav */
+    .nav-links { display:none; }
+    nav { padding:16px 20px; }
+
+    /* hero */
+    section { padding:70px 20px; }
+    .hero-content { padding:0 20px; }
+    .hero-h1 { font-size:clamp(2.6rem,13vw,4rem); line-height:.95; }
+    .hero-subtitle { font-size:.8rem; }
+    .hero-cta { padding:14px 28px; font-size:.68rem; margin-top:36px; }
+    .sculpture-container { display:none; }
+    .scroll-indicator { bottom:28px; }
+
+    /* about */
+    #about { padding:70px 20px !important; gap:40px !important; }
+    .about-stat-grid { grid-template-columns:1fr 1fr; gap:2px; }
+    .about-stat { padding:22px 18px; }
+    .about-stat-num { font-size:2.6rem; }
+    .section-h2 { font-size:clamp(2.2rem,10vw,3.2rem); }
+    .statement-block { padding:22px 20px; }
+    .statement-text { font-size:1.15rem; }
+
+    /* horizontal gallery */
+    .hg-header { padding:50px 20px 28px; }
+    .hg-sticky { height:65vh; }
+    .hg-track { padding:0 20px; gap:12px; }
+    .hg-card { width:80vw; height:58vh; }
+    .hg-card-title { font-size:1.2rem; }
+    .hg-hint { display:none; }
+
+    /* portfolio */
+    .portfolio-masonry { columns:1; }
+    .portfolio-item .art-placeholder { height:260px !important; }
+    .portfolio-filter { flex-wrap:wrap; gap:2px; }
+    .filter-btn { font-size:.6rem; padding:10px 14px; }
+
+    /* timeline */
+    .timeline-grid { grid-template-columns:1fr; }
+    .timeline-card { padding:32px 24px; }
+    .card-year { font-size:2.2rem; }
+
+    /* collections */
+    .collections-grid { grid-template-columns:1fr; }
+    .collection-card { padding:28px 20px; }
+    .collections-marquee { margin-top:30px; }
+    .marquee-item { font-size:.9rem; gap:40px; }
+
+    /* contact */
+    #contact { padding:80px 20px; }
+    .contact-h2 { font-size:clamp(2.4rem,11vw,4rem); }
+    .contact-sub { font-size:.8rem; margin-bottom:36px; }
+    .contact-email { font-size:1.1rem; }
+
+    /* footer */
+    footer { padding:36px 20px; gap:20px; }
+    .footer-copy { display:none; }
+    .footer-socials { gap:12px; }
+    .social-link { width:38px; height:38px; }
+
+    /* animated dividers smaller */
+    .anim-divider { height:12px; }
+
+    /* section label */
+    .section-label { font-size:.6rem; }
+  }
+
+  /* ── VERY SMALL (≤380px) ── */
+  @media(max-width:380px){
+    .hero-h1 { font-size:2.4rem; }
+    .hg-card { width:88vw; }
+    .about-stat-num { font-size:2.2rem; }
   }
 `;
 
