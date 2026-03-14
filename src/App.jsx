@@ -945,7 +945,7 @@ export default function CarolinaSardi() {
         <div style={{position:"relative",zIndex:1}}>
           <p className="section-label reveal">About the Artist</p>
           <h2 className="section-h2 reveal">Form,<br/><em>Matter</em><br/>& Memory</h2>
-          <p className="about-text reveal">Carolina Sardi is an Argentine contemporary sculptor based in Miami. Her work explores the relationship between organic form and geometric language, creating painted steel sculptures that dialogue with architecture and public space.</p>
+          <p className="about-text reveal">xxxxx xxxx is an Argentine contemporary sculptor based in Miami. Her work explores the relationship between organic form and geometric language, creating painted steel sculptures that dialogue with architecture and public space.</p>
           <p className="about-text reveal">Trained at the Escuela Nacional de Bellas Artes in Buenos Aires, Sardi develops a practice rooted in biomorphic abstraction — forms that evoke the body, nature, and movement — translated into metal, color, and light.</p>
           <div className="about-stat-grid stagger">
             {[["30","Years of Career"],["25","Solo Exhibitions"],["15","Countries"],["40","Public Collections"]].map(([n,l],i)=>(
