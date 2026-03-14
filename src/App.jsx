@@ -911,7 +911,7 @@ export default function CarolinaSardi() {
         <div className="sculpture-container"><SculptureSVG/></div>
         <div className="hero-content">
           <p className="hero-eyebrow">Contemporary Sculptor · Buenos xxxx</p>
-          <h1 className="hero-h1">Carolina<br/><em>Sardi</em></h1>
+          <h1 className="hero-h1">Carolina<br/><em>xxxxx</em></h1>
           <p className="hero-subtitle">Sculpture · Installation · Public Art</p>
           <a href="#portfolio" className="hero-cta">
             Explore Works
