@@ -1104,7 +1104,7 @@ export default function CarolinaSardi() {
       </section>
 
       <footer>
-        <div className="footer-logo">Carolina Sardi</div>
+        <div className="footer-logo">Carolina xxxxx</div>
         <div className="footer-copy">© 2025 xxxxx  xxxx. All rights reserved.</div>
         <div className="footer-socials">
           {[
