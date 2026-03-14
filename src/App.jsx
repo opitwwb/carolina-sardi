@@ -373,7 +373,7 @@ const EXHIBITIONS = [
 ];
 const COLLECTIONS = [
   { name:"Miami-Dade Public Library",     loc:"Miami, Florida",            icon:"🏛" },
-  { name:"Museo de Arte Moderno",         loc:"Buenos Aires, Argentina",   icon:"🎨" },
+  { name:"Museo de Arte Moderno",         loc:"Buenos xxxx, Argentina",   icon:"🎨" },
   { name:"Coral Gables Museum",           loc:"Coral Gables, Florida",     icon:"🏛" },
   { name:"Museum of Art Fort Lauderdale", loc:"Fort Lauderdale, FL",       icon:"🏺" },
   { name:"Private Collections",          loc:"USA, Europe, Latin America", icon:"✦"  },
@@ -885,7 +885,7 @@ export default function CarolinaSardi() {
       <ScrollPathRail/>
 
       <nav className={scrolled?"scrolled":""}>
-        <a href="#hero" className="nav-logo">Carolina Sardi</a>
+        <a href="#hero" className="nav-logo">xxxxx xxxx</a>
         <ul className="nav-links">
           {["About","Works","Exhibitions","Collections","Contact"].map((l,i)=>(
             <li key={i}><a href={`#${["about","portfolio","timeline","collections","contact"][i]}`}>{l}</a></li>
@@ -910,7 +910,7 @@ export default function CarolinaSardi() {
         />
         <div className="sculpture-container"><SculptureSVG/></div>
         <div className="hero-content">
-          <p className="hero-eyebrow">Contemporary Sculptor · Buenos Aires</p>
+          <p className="hero-eyebrow">Contemporary Sculptor · Buenos xxxx</p>
           <h1 className="hero-h1">Carolina<br/><em>Sardi</em></h1>
           <p className="hero-subtitle">Sculpture · Installation · Public Art</p>
           <a href="#portfolio" className="hero-cta">
@@ -945,7 +945,7 @@ export default function CarolinaSardi() {
         <div style={{position:"relative",zIndex:1}}>
           <p className="section-label reveal">About the Artist</p>
           <h2 className="section-h2 reveal">Form,<br/><em>Matter</em><br/>& Memory</h2>
-          <p className="about-text reveal">xxxxx xxxx is an Argentine contemporary sculptor based in Miami. Her work explores the relationship between organic form and geometric language, creating painted steel sculptures that dialogue with architecture and public space.</p>
+          <p className="about-text reveal">xxxxx xxxx is an xxxxx contemporary sculptor based in Miami. Her work explores the relationship between organic form and geometric language, creating painted steel sculptures that dialogue with architecture and public space.</p>
           <p className="about-text reveal">Trained at the Escuela Nacional de Bellas Artes in Buenos Aires, Sardi develops a practice rooted in biomorphic abstraction — forms that evoke the body, nature, and movement — translated into metal, color, and light.</p>
           <div className="about-stat-grid stagger">
             {[["30","Years of Career"],["25","Solo Exhibitions"],["15","Countries"],["40","Public Collections"]].map(([n,l],i)=>(
@@ -1100,18 +1100,18 @@ export default function CarolinaSardi() {
           style={{ display:"block", margin:"0 auto 48px", position:"relative", zIndex:1 }}
         />
         <p className="contact-sub reveal" style={{position:"relative",zIndex:1}}>Inquiries for acquisitions, exhibitions & public art commissions</p>
-        <a href="mailto:studio@carolinasardi.com" className="contact-email reveal" style={{position:"relative",zIndex:1}}>studio@carolinasardi.com</a>
+        <a href="mailto:studio@xxxxx.com" className="contact-email reveal" style={{position:"relative",zIndex:1}}>studio@carolinasardi.com</a>
       </section>
 
       <footer>
         <div className="footer-logo">Carolina Sardi</div>
-        <div className="footer-copy">© 2025 Carolina Sardi. All rights reserved.</div>
+        <div className="footer-copy">© 2025 xxxxx  xxxx. All rights reserved.</div>
         <div className="footer-socials">
           {[
-            {href:"https://instagram.com/carolinasardi",label:"Instagram",icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>},
-            {href:"https://facebook.com/carolinasardi",label:"Facebook",icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>},
-            {href:"mailto:studio@carolinasardi.com",label:"Email",icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>},
-            {href:"https://carolinasardi.com",label:"Website",icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>},
+            {href:"https://instagram.com/",label:"Instagram",icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>},
+            {href:"https://facebook.com/",label:"Facebook",icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>},
+            {href:"mailto:studio@xxxxx.com",label:"Email",icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>},
+            {href:"https://xxxx.com",label:"Website",icon:<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>},
           ].map(({href,label,icon})=>(
             <a key={label} href={href} target="_blank" rel="noopener" className="social-link" title={label}>{icon}</a>
           ))}
